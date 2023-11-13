@@ -1,27 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class NetworkRequest : Singleton<NetworkRequest>
 {
-    [SerializeField] string absoluteURL;
     [SerializeField] string apiURL;
+    [SerializeField] float amountPerPage;
     PokemonList pokemonList;
 
     private void Start() {
-        RequestList();
+        RequestList(NetworkConfig.ABSOLUTE_URL+NetworkConfig.POKEMON_URI+"?limit="+amountPerPage);
     }
 
-    private void RequestList()
+    public void RequestList(string URL)
     {
-        StartCoroutine(GetAllPokemons());
+        StartCoroutine(GetPokemons(URL));
     }
-    IEnumerator GetAllPokemons()
+    IEnumerator GetPokemons(string URL)
     {
-        UnityWebRequest uwr=UnityWebRequest.Get(apiURL);
-
+        UnityWebRequest uwr=UnityWebRequest.Get(URL);
         yield return uwr.SendWebRequest();
 
         if(uwr.isNetworkError){
@@ -29,33 +29,28 @@ public class NetworkRequest : Singleton<NetworkRequest>
         }
         else
         {
-            Debug.LogError("Received response: "+uwr.downloadHandler.text);
             pokemonList=JsonConvert.DeserializeObject<PokemonList>(uwr.downloadHandler.text);
+            StartCoroutine(GetPokemonsToDisplay());
+            UIManager.Instance.SetUpPageButton(pokemonList.Next!=null?pokemonList.Next.ToString():"null",pokemonList.Previous!=null?pokemonList.Previous.ToString():"null");
         }
         
+    }
+    IEnumerator GetPokemonsToDisplay()
+    {
+        List<UnityWebRequestAsyncOperation> uwrs=new List<UnityWebRequestAsyncOperation>();
+
         foreach(var item in pokemonList.Results)
         {
-            Debug.LogError(absoluteURL+item.Url.AbsolutePath);
-            StartCoroutine(GetPokemon(absoluteURL+item.Url.AbsolutePath));
+            UnityWebRequest uwr=UnityWebRequest.Get(NetworkConfig.ABSOLUTE_URL+item.Url.AbsolutePath);
+            uwrs.Add(uwr.SendWebRequest());
         }
-    }
 
-    IEnumerator GetPokemon(string targetURL)
-    {
-        UnityWebRequest uwr=UnityWebRequest.Get(targetURL);
-
-        yield return uwr.SendWebRequest();
-
-        if(uwr.isNetworkError){
-            Debug.LogError("Error while sending request:" + uwr.error);
-        }
-        else
+        yield return new WaitUntil(()=>uwrs.All(x=>x.isDone));
+        
+        foreach(var item in uwrs)
         {
-            UIManager.Instance.AddPokemons(JsonConvert.DeserializeObject<Pokemon>(uwr.downloadHandler.text));
-            // Pokemon test=JsonConvert.DeserializeObject<Pokemon>(uwr.downloadHandler.text);
-            // Debug.LogError(test.Name);
-            // Debug.LogError(test.Height.ToString());
-            // UIManager.Instance.A
+            UIManager.Instance.AddPokemons(JsonConvert.DeserializeObject<Pokemon>(item.webRequest.downloadHandler.text));
         }
+        UIManager.Instance.SetUpPokemonList();
     }
 }

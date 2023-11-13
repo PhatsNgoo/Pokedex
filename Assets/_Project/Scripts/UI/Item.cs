@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Networking;
 using TMPro;
 public class Item : MonoBehaviour
 {
@@ -14,9 +15,29 @@ public class Item : MonoBehaviour
 
     public void SetUpItem(Pokemon pokemonData)
     {
-        pokemonName.text=pokemonData.Name;
-        pokemonBaseExperience.text=pokemonData.BaseExperience.ToString();
-        pokemonHeight.text=pokemonData.Height.ToString();
-        pokemonWeight.text=pokemonData.Weight.ToString();
+        pokemonName.text = pokemonData.Name;
+        pokemonBaseExperience.text = pokemonData.BaseExperience.ToString();
+        pokemonHeight.text = pokemonData.Height.ToString();
+        pokemonWeight.text = pokemonData.Weight.ToString();
+        StartCoroutine(GetThumbnail(pokemonData.Sprites.FrontDefault.ToString()));
+    }
+
+    IEnumerator GetThumbnail(string uri)
+    {
+        UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(uri);
+        uwr.SendWebRequest();
+        yield return new WaitUntil(() => uwr.isDone);
+
+        if (uwr.isNetworkError)
+        {
+            Debug.LogError("Error while sending request:" + uwr.error);
+        }
+        else
+        {
+            Texture2D texture = ((DownloadHandlerTexture)uwr.downloadHandler).texture;
+            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+            thumbnail.sprite = sprite;
+        }
+
     }
 }

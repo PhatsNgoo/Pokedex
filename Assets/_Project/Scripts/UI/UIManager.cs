@@ -2,16 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
 {
     [SerializeField] List<Pokemon> pokemons=new List<Pokemon>();
 
     [SerializeField] List<Transform> scrollItems=new List<Transform>();
+    [SerializeField] Button previousPageBtn;
+    [SerializeField] Button nextPageBtn;
 
-
-    public void AddPokemons(Pokemon pokemonData)
+    private void Awake() {
+        previousPageBtn.onClick.RemoveAllListeners();
+        nextPageBtn.onClick.RemoveAllListeners();
+    }
+    private void Start() {
+        
+    }
+    public void AddPokemons(Pokemon data)
     {
-        pokemons.Add(pokemonData);
+        pokemons.Add(data);
     }
     public void SetUpPokemonList()
     {
@@ -19,5 +28,14 @@ public class UIManager : Singleton<UIManager>
         {
             scrollItems[i].GetComponent<Item>().SetUpItem(pokemons[i]);
         }
+    }
+    public List<Pokemon> GetPokemonsToDisplay()
+    {
+        return pokemons;
+    }
+    public void SetUpPageButton(string next,string previous)
+    {
+        previousPageBtn.onClick.AddListener(()=>NetworkRequest.Instance.RequestList(previous));
+        nextPageBtn.onClick.AddListener(()=>NetworkRequest.Instance.RequestList(next));
     }
 }
