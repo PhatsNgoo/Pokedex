@@ -5,37 +5,58 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
 {
-    [SerializeField] List<Pokemon> pokemons=new List<Pokemon>();
+    [SerializeField] List<Pokemon> pokemons = new List<Pokemon>();
 
-    [SerializeField] List<Transform> scrollItems=new List<Transform>();
+    [SerializeField] List<Transform> scrollItems = new List<Transform>();
     [SerializeField] Button previousPageBtn;
     [SerializeField] Button nextPageBtn;
+    [SerializeField] ObjectPooler objectPooler;
+    [SerializeField] public Transform scrollViewParent;
 
-    private void Awake() {
-        previousPageBtn.onClick.RemoveAllListeners();
-        nextPageBtn.onClick.RemoveAllListeners();
+    private void Awake()
+    {
     }
-    private void Start() {
-        
+    private void Start()
+    {
+
     }
     public void AddPokemons(Pokemon data)
     {
         pokemons.Add(data);
     }
+
+    public void AddScollItems(Transform item)
+    {
+        scrollItems.Add(item);
+    }
     public void SetUpPokemonList()
     {
-        for(int i=0;i<pokemons.Count;i++)
+        for (int i = 0; i < pokemons.Count; i++)
         {
             scrollItems[i].GetComponent<Item>().SetUpItem(pokemons[i]);
         }
     }
-    public List<Pokemon> GetPokemonsToDisplay()
+    public void SetUpPageButton(string next, string previous)
     {
-        return pokemons;
+        previousPageBtn.gameObject.SetActive(previous == "null" ? false : true);
+        nextPageBtn.gameObject.SetActive(next == "null" ? false : true);
+        previousPageBtn.onClick.RemoveAllListeners();
+        nextPageBtn.onClick.RemoveAllListeners();
+        previousPageBtn.onClick.AddListener(() => LoadPrevPage(previous));
+        nextPageBtn.onClick.AddListener(() => LoadNextPage(next));
     }
-    public void SetUpPageButton(string next,string previous)
+    void LoadNextPage(string next)
     {
-        previousPageBtn.onClick.AddListener(()=>NetworkRequest.Instance.RequestList(previous));
-        nextPageBtn.onClick.AddListener(()=>NetworkRequest.Instance.RequestList(next));
+        if (!NetworkRequest.Instance.IsRequesting())
+            NetworkRequest.Instance.RequestList(next);
+    }
+    void LoadPrevPage(string prev)
+    {
+        if (!NetworkRequest.Instance.IsRequesting())
+            NetworkRequest.Instance.RequestList(prev);
+    }
+    public void ClearPokemons()
+    {
+        pokemons.Clear();
     }
 }

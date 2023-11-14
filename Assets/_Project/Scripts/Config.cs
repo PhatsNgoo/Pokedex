@@ -9,4 +9,5 @@ public class NetworkConfig
 {
     public static string ABSOLUTE_URL="https://pokeapi.co";
     public static string POKEMON_URI="/api/v2/pokemon";
+    public static int AMOUNT_PER_PAGE=30;
 }

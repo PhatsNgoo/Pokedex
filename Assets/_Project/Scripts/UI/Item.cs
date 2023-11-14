@@ -13,6 +13,8 @@ public class Item : MonoBehaviour
     [SerializeField] TextMeshProUGUI pokemonHeight;
     [SerializeField] TextMeshProUGUI pokemonWeight;
 
+    private void Start() {
+    }
     public void SetUpItem(Pokemon pokemonData)
     {
         pokemonName.text = pokemonData.Name;
