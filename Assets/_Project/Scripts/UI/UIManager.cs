@@ -33,7 +33,18 @@ public class UIManager : Singleton<UIManager>
     {
         for (int i = 0; i < pokemons.Count; i++)
         {
+            if(!scrollItems[i].gameObject.activeSelf)
+            {
+                scrollItems[i].gameObject.SetActive(true);
+            }
             scrollItems[i].GetComponent<Item>().SetUpItem(pokemons[i]);
+        }
+        if (pokemons.Count < scrollItems.Count)
+        {
+            for (int i = pokemons.Count; i < scrollItems.Count; i++)
+            {
+                scrollItems[i].gameObject.SetActive(false);
+            }
         }
     }
     public void SetUpPageButton(string next, string previous)

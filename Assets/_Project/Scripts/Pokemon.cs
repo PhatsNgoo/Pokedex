@@ -12,7 +12,7 @@ public partial class Pokemon
     public List<Ability> Abilities { get; set; }
 
     [JsonProperty("base_experience")]
-    public long BaseExperience { get; set; }
+    public long? BaseExperience { get; set; }
 
     [JsonProperty("forms")]
     public List<Species> Forms { get; set; }

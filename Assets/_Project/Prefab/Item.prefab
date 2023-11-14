@@ -102,6 +102,7 @@ MonoBehaviour:
   pokemonBaseExperience: {fileID: 5446262636201544020}
   pokemonHeight: {fileID: 1359877020031958124}
   pokemonWeight: {fileID: 6946771870362406398}
+  dummySprite: {fileID: 21300000, guid: ec03f79379868c642b48ae5ddc821b6d, type: 3}
 --- !u!1 &3262481114690643399
 GameObject:
   m_ObjectHideFlags: 0

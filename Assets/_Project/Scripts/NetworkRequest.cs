@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,13 @@ public class NetworkRequest : Singleton<NetworkRequest>
         
         foreach(var item in uwrs)
         {
+            try{
             UIManager.Instance.AddPokemons(JsonConvert.DeserializeObject<Pokemon>(item.webRequest.downloadHandler.text));
+            }
+            catch(Exception e){
+                Debug.LogError(item.webRequest.downloadHandler.text);
+                Debug.LogError(e);
+            }
         }
         UIManager.Instance.SetUpPokemonList();
         isRequesting=false;
