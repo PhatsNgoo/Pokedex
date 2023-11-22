@@ -7,8 +7,7 @@ jobs:
     name: Request manual activation file 🔑
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - name: Checkout
+          uses: actions/checkout@v4.1.1
       - name: Unity - Activate
-
           uses: game-ci/unity-activate@v2.0.0
