@@ -38,3 +38,9 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: WebGL
+      # Storing Build
+      - name: Storing Build File
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: build
