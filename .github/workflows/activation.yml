@@ -1,16 +1,14 @@
-name: Get Unity license activation file 🔐
+name: Actions 😎
 
-on: workflow_dispatch
-
-
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+on: [push, pull_request]
 
 jobs:
-    name: Request manual activation file 🔑
+  build:
+    name: Build my project ✨
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-          uses: actions/checkout@v4.1.1
-      - name: Unity - Activate
-          uses: game-ci/unity-activate@v2.0.0
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
