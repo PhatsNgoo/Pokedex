@@ -2,6 +2,10 @@ name: Get Unity license activation file 🔐
 
 on: workflow_dispatch
 
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
 jobs:
     name: Request manual activation file 🔑
     runs-on: ubuntu-latest
